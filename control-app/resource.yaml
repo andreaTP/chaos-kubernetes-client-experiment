@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: chaos-test-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: configMaps-reader
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs:
+    - get
+    - list
+    - watch
+    - patch
+    - update
+    - create
+    - delete
+    - post
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: configMaps-reader-binding
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: configMaps-reader
+subjects:
+  - kind: ServiceAccount
+    name: chaos-test-sa
+apiVersion: rbac.authorization.k8s.io/v1
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: control
+spec:
+  containers:
+  - name: control
+    image: docker.io/andreatp/test-control-app:latest
+  restartPolicy: Never
+  serviceAccountName: chaos-test-sa
