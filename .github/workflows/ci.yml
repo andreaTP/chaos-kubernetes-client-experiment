@@ -39,10 +39,12 @@ jobs:
           minikube-version: 1.30.1
           # kubernetes-version: v1.27.2
           cpus: 2
-          memory: 8000m
+          memory: 6000m
 
       - name: Install Chaos Mesh
-        run: curl -sSL https://mirrors.chaos-mesh.org/v2.6.0/install.sh | bash
+        run: |
+          curl -sSL https://mirrors.chaos-mesh.org/v2.6.0/install.sh | bash
+          kubectl wait --for=condition=Ready pods -n chaos-mesh --all --timeout=600s
 
       - name: Run the tests
         run: mvn -B verify
