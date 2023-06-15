@@ -38,6 +38,22 @@ public class DemoIT {
     @AfterEach
     void afterEach() throws Exception {
         logger.info("AfterEach execution");
+
+        try {
+            var checkerLogs = checkerSelector().getLog();
+            System.out.println("*** Checker Logs ***\n" + checkerLogs);
+            System.out.println("******");
+        } catch (Exception e) {
+            // ignore
+        }
+
+        try {
+            var controlLogs = controlSelector().getLog();
+            System.out.println("*** Control Logs ***\n" + controlLogs);
+            System.out.println("******");
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     private static final int TOTAL_COUNT = 1 * 60 * 20; // 1 count each second, for 20 minutes
