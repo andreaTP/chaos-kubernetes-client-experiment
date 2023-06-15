@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @KubernetesTest
 @LoadKubernetesManifests(value = {"checker-infra.yaml", "control-infra.yaml"})
@@ -39,8 +40,12 @@ public class DemoIT {
         logger.info("AfterEach execution");
     }
 
-    private static void setNamespace(Pod pod, String namespace) {
-        pod.getSpec().getContainers().get(0).setArgs(List.of("--namespace", namespace));
+    private static final int TOTAL_COUNT = 1 * 60 * 20; // 1 count each second, for 20 minutes
+
+    private static void setArgs(Pod pod, String namespace) {
+        pod.getSpec().getContainers().get(0).setArgs(List.of(
+                "--namespace", namespace,
+                "--num", Integer.toString(TOTAL_COUNT)));
     }
 
     private static void setImage(Pod pod, String image) {
@@ -67,7 +72,7 @@ public class DemoIT {
                         if (checkerImage != null) {
                             setImage(((Pod) r.item()), checkerImage);
                         }
-                        setNamespace(((Pod) r.item()), client.getNamespace());
+                        setArgs(((Pod) r.item()), client.getNamespace());
                         r.inNamespace(client.getNamespace()).create();
                     });
         }
@@ -85,16 +90,20 @@ public class DemoIT {
                         if (controlImage != null) {
                             setImage(((Pod) r.item()), controlImage);
                         }
-                        setNamespace(((Pod) r.item()), client.getNamespace());
+                        setArgs(((Pod) r.item()), client.getNamespace());
                         r.inNamespace(client.getNamespace()).create();
                     });
         }
+        await().pollInterval(1, TimeUnit.SECONDS).ignoreExceptions().atMost(1, TimeUnit.MINUTES).until(() -> {
+            assertTrue(checkerSelector().getLog().contains("Update received, and it's in the correct order, counter: 1"));
+            return true;
+        });
 
         try (var is = this.getClass().getClassLoader().getResourceAsStream("network-delay.yaml")) {
             client.load(is).inNamespace(client.getNamespace()).createOrReplace();
         }
 
-        await().pollInterval(2, TimeUnit.SECONDS).ignoreExceptions().atMost(3, TimeUnit.MINUTES).until(() -> {
+        await().pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().atMost(20, TimeUnit.MINUTES).until(() -> {
             logger.info("Checking status");
             System.out.println("checker: " + checkerSelector().get().getStatus().getPhase());
             System.out.println("control: " + controlSelector().get().getStatus().getPhase());
