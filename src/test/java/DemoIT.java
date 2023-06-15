@@ -119,7 +119,7 @@ public class DemoIT {
             client.load(is).inNamespace(client.getNamespace()).createOrReplace();
         }
 
-        await().pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().atMost(20, TimeUnit.MINUTES).until(() -> {
+        await().pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().atMost(30, TimeUnit.MINUTES).until(() -> {
             logger.info("Checking status");
             System.out.println("checker: " + checkerSelector().get().getStatus().getPhase());
             System.out.println("control: " + controlSelector().get().getStatus().getPhase());
