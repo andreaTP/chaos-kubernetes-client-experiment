@@ -35,6 +35,7 @@ public class ControlCommand implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Running Control App");
         var client = new KubernetesClientBuilder().build();
 
         var defaultConfigMap = new ConfigMapBuilder()

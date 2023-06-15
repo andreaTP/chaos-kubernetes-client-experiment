@@ -30,4 +30,5 @@ To test:
 - check the status of the pods!
 
 
-TODO: The two control/checker apps can live in the same maven project
+- checker -> run the SharedInformer to get notifications
+- control -> apply changes to the resource

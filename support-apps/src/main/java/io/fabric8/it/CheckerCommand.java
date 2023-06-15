@@ -13,8 +13,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Command(name = "probe", mixinStandardHelpOptions = true)
-public class ProbeCommand implements Runnable {
+@Command(name = "checker", mixinStandardHelpOptions = true)
+public class CheckerCommand implements Runnable {
 
     @CommandLine.Option(names = {"--num"}, paramLabel = "<num>", defaultValue = "10", description = "The number to be reached to quit successfully")
     int num;
@@ -36,6 +36,7 @@ public class ProbeCommand implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Running Checker App");
         var client = new KubernetesClientBuilder().build();
 
         var latch = new CountDownLatch(1);
@@ -103,7 +104,7 @@ public class ProbeCommand implements Runnable {
     }
 
     public static void main(String[] args) {
-        int exitCode = new CommandLine(new ProbeCommand()).execute(args);
+        int exitCode = new CommandLine(new CheckerCommand()).execute(args);
         System.exit(exitCode);
     }
 

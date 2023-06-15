@@ -32,14 +32,3 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: chaos-test-control-sa
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: control
-spec:
-  containers:
-  - name: control
-    image: docker.io/andreatp/test-control-app:latest
-  restartPolicy: Never
-  serviceAccountName: chaos-test-control-sa

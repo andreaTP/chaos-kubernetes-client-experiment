@@ -5,11 +5,9 @@ metadata:
 spec:
   action: delay # the specific chaos action to inject
   mode: one # the mode to run chaos action; supported modes are one/all/fixed/fixed-percent/random-max-percent
-  selector: # pods where to inject chaos actions
-    namespaces:
-      - default
+  selector:
     labelSelectors:
-      'app': 'web-show' # the label of the pod for chaos injection
+      'app': 'checker' # the label of the pod for chaos injection
   delay:
-    latency: '10ms'
-  duration: '12s'
+    latency: '1000ms'
+  duration: '20s'

@@ -1,21 +1,90 @@
 import io.fabric8.junit.jupiter.api.KubernetesTest;
 import io.fabric8.junit.jupiter.api.LoadKubernetesManifests;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.dsl.PodResource;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @KubernetesTest
-@LoadKubernetesManifests("demo.yaml")
+@LoadKubernetesManifests(value = {"checker-infra.yaml", "control-infra.yaml"})
 public class DemoIT {
     protected Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    @Test
-    public void testDeploy() {
-        logger.info("Running testDeploy test.");
+    KubernetesClient client;
 
-        assertTrue(true);
+    @BeforeEach
+    void beforeEach() throws Exception {
+        logger.info("BeforeEach execution");
+        // this needs to be executed before the pods are started
+        client.configMaps().inNamespace(client.getNamespace()).withName("chaos-test").delete();
+    }
+
+    @AfterEach
+    void afterEach() throws Exception {
+        logger.info("AfterEach execution");
+    }
+
+    private static void setNamespace(Pod pod, String namespace) {
+        pod.getSpec().getContainers().get(0).setArgs(List.of("--namespace", namespace));
+    }
+
+    private PodResource checkerSelector() {
+        return client.pods().inNamespace(client.getNamespace()).withName("checker");
+    }
+    private PodResource controlSelector() {
+        return client.pods().inNamespace(client.getNamespace()).withName("checker");
+    }
+
+    @Test
+    void testDeploy() throws IOException {
+        logger.warn("Running testDeploy test.");
+
+        try (var is = this.getClass().getClassLoader().getResourceAsStream("checker-pod.yaml")) {
+            var resources = client.load(is).resources().collect(Collectors.toList());
+            resources
+                    .stream()
+                    .filter(r -> r.item().getKind().equals("Pod"))
+                    .forEach(r -> {
+                        setNamespace(((Pod) r.item()), client.getNamespace());
+                        r.inNamespace(client.getNamespace()).create();
+                    });
+        }
+
+        try (var is = this.getClass().getClassLoader().getResourceAsStream("control-pod.yaml")) {
+            var resources = client.load(is).resources().collect(Collectors.toList());
+            resources
+                    .stream()
+                    .filter(r -> r.item().getKind().equals("Pod"))
+                    .forEach(r -> {
+                        setNamespace(((Pod) r.item()), client.getNamespace());
+                        r.inNamespace(client.getNamespace()).create();
+                    });
+        }
+
+        try (var is = this.getClass().getClassLoader().getResourceAsStream("network-delay.yaml")) {
+            client.load(is).inNamespace(client.getNamespace()).createOrReplace();
+        }
+
+        await().pollInterval(2, TimeUnit.SECONDS).ignoreExceptions().atMost(3, TimeUnit.MINUTES).until(() -> {
+            logger.info("Checking status");
+            System.out.println("checker: " + checkerSelector().get().getStatus().getPhase());
+            System.out.println("control: " + controlSelector().get().getStatus().getPhase());
+            assertEquals("Succeeded", checkerSelector().get().getStatus().getPhase());
+            assertEquals("Succeeded", controlSelector().get().getStatus().getPhase());
+            return true;
+        });
     }
 
 }
