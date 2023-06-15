@@ -11,7 +11,7 @@ FROM eclipse-temurin:17
 
 WORKDIR /app
 
-COPY --from=builder /build/target/*.jar .
-COPY --from=builder /build/target/app .
+COPY --from=builder /build/target/*.jar /app/
+COPY --from=builder /build/target/app /app/
 
 ENTRYPOINT [ "/app/app" ]
