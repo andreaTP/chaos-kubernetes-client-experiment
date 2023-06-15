@@ -24,6 +24,9 @@ public class DemoIT {
 
     KubernetesClient client;
 
+    String checkerImage = System.getenv("CHECKER_IMAGE");
+    String controlImage = System.getenv("CONTROL_IMAGE");
+
     @BeforeEach
     void beforeEach() throws Exception {
         logger.info("BeforeEach execution");
@@ -38,6 +41,10 @@ public class DemoIT {
 
     private static void setNamespace(Pod pod, String namespace) {
         pod.getSpec().getContainers().get(0).setArgs(List.of("--namespace", namespace));
+    }
+
+    private static void setImage(Pod pod, String image) {
+        pod.getSpec().getContainers().get(0).setImage(image);
     }
 
     private PodResource checkerSelector() {
@@ -57,10 +64,17 @@ public class DemoIT {
                     .stream()
                     .filter(r -> r.item().getKind().equals("Pod"))
                     .forEach(r -> {
+                        if (checkerImage != null) {
+                            setImage(((Pod) r.item()), checkerImage);
+                        }
                         setNamespace(((Pod) r.item()), client.getNamespace());
                         r.inNamespace(client.getNamespace()).create();
                     });
         }
+        await().pollInterval(1, TimeUnit.SECONDS).ignoreExceptions().atMost(1, TimeUnit.MINUTES).until(() -> {
+            assertEquals("Running", checkerSelector().get().getStatus().getPhase());
+            return true;
+        });
 
         try (var is = this.getClass().getClassLoader().getResourceAsStream("control-pod.yaml")) {
             var resources = client.load(is).resources().collect(Collectors.toList());
@@ -68,6 +82,9 @@ public class DemoIT {
                     .stream()
                     .filter(r -> r.item().getKind().equals("Pod"))
                     .forEach(r -> {
+                        if (controlImage != null) {
+                            setImage(((Pod) r.item()), controlImage);
+                        }
                         setNamespace(((Pod) r.item()), client.getNamespace());
                         r.inNamespace(client.getNamespace()).create();
                     });

@@ -7,6 +7,6 @@ metadata:
 spec:
   containers:
   - name: checker
-    image: docker.io/andreatp/test-checker-app:latest
+    image: docker.io/andreatp/fabric8-it-checker-app:latest
   restartPolicy: Never
   serviceAccountName: chaos-test-checker-sa
