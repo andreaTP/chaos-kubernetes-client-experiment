@@ -35,6 +35,16 @@ public class DemoIT {
         logger.info("BeforeEach execution");
         // this needs to be executed before the pods are started
         client.configMaps().inNamespace(client.getNamespace()).withName("chaos-test").delete();
+        try {
+            checkerSelector().delete();
+        } catch (Exception e) {
+            // ignore
+        }
+        try {
+            controlSelector().delete();
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     @AfterEach
