@@ -55,6 +55,7 @@ public class DemoIT {
             var checkerLogs = checkerSelector().getLog();
             System.out.println("*** Checker Logs ***\n" + checkerLogs);
             System.out.println("******");
+            checkerSelector().delete();
         } catch (Exception e) {
             // ignore
         }
@@ -63,6 +64,7 @@ public class DemoIT {
             var controlLogs = controlSelector().getLog();
             System.out.println("*** Control Logs ***\n" + controlLogs);
             System.out.println("******");
+            controlSelector().delete();
         } catch (Exception e) {
             // ignore
         }
