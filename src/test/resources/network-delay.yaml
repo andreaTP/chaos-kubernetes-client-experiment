@@ -9,5 +9,5 @@ spec:
     labelSelectors:
       'app': 'checker' # the label of the pod for chaos injection
   delay:
-    latency: '1s' # ten seconds delay with 10 it fails
-  duration: '12m' # for 10 minutes
+    latency: '10s'
+  duration: '12m'
