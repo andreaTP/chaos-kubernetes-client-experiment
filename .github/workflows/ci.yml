@@ -12,6 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         java-version: [11, 17]
+        http-client: [ "okhttp", "jdkhttp", "vertxhttp"]
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -28,6 +29,7 @@ jobs:
         run: |
           echo "CHECKER_IMAGE=$(echo ttl.sh/$(uuidgen)-checker:10h | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
           echo "CONTROL_IMAGE=$(echo ttl.sh/$(uuidgen)-control:10h | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+          echo "HTTP_CLIENT=${{ matrix.http-client }}" >> "$GITHUB_ENV"
 
       - name: Build and push support apps
         working-directory: ./support-apps

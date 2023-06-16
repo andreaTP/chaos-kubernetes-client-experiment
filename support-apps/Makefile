@@ -1,8 +1,8 @@
 all: build push
 
 build:
-	docker build --build-arg APP_NAME=checker . -t ${CHECKER_IMAGE}
-	docker build --build-arg APP_NAME=control . -t ${CONTROL_IMAGE}
+	docker build --build-arg APP_NAME=checker --build-arg HTTP_CLIENT=${HTTP_CLIENT} . -t ${CHECKER_IMAGE}
+	docker build --build-arg APP_NAME=control --build-arg HTTP_CLIENT=${HTTP_CLIENT} . -t ${CONTROL_IMAGE}
 
 push:
 	docker push ${CHECKER_IMAGE}
