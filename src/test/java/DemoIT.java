@@ -6,6 +6,8 @@ import io.fabric8.kubernetes.client.dsl.PodResource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +78,9 @@ public class DemoIT {
     }
 
     @Test
-    void testDeploy() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {"network-delay.yaml", "network-loss.yaml", "network-duplicate.yaml"})
+    void test(String chaosExperiment) throws IOException {
         logger.warn("Running testDeploy test.");
 
         try (var is = this.getClass().getClassLoader().getResourceAsStream("checker-pod.yaml")) {
@@ -115,7 +119,7 @@ public class DemoIT {
             return true;
         });
 
-        try (var is = this.getClass().getClassLoader().getResourceAsStream("network-delay.yaml")) {
+        try (var is = this.getClass().getClassLoader().getResourceAsStream(chaosExperiment)) {
             client.load(is).inNamespace(client.getNamespace()).createOrReplace();
         }
 

@@ -1,13 +1,14 @@
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: network-delay
+  name: network-loss
 spec:
-  action: delay
+  action: loss
   mode: all
   selector:
     labelSelectors:
       'app': 'checker'
-  delay:
-    latency: '10s'
+  loss:
+    loss: '50'
+    correlation: '50'
   duration: '12m'

@@ -3,11 +3,12 @@ kind: NetworkChaos
 metadata:
   name: network-delay
 spec:
-  action: delay
+  action: duplicate
   mode: all
   selector:
     labelSelectors:
       'app': 'checker'
-  delay:
-    latency: '10s'
+  duplicate:
+    duplicate: '50'
+    correlation: '50'
   duration: '12m'

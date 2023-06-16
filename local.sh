@@ -5,7 +5,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 export CHECKER_IMAGE=$(echo ttl.sh/$(uuidgen)-checker:10h | tr '[:upper:]' '[:lower:]')
 export CONTROL_IMAGE=$(echo ttl.sh/$(uuidgen)-control:10h | tr '[:upper:]' '[:lower:]')
-export HTTP_CLIENT="jdkhttp"
+export HTTP_CLIENT="okhttp"
 
 (cd $SCRIPT_DIR/support-apps && make all)
 

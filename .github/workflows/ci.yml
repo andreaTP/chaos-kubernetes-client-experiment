@@ -14,7 +14,7 @@ jobs:
         java-version: [11, 17]
         http-client: [ "okhttp", "jdkhttp", "vertxhttp"]
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v3
 
