@@ -61,7 +61,12 @@ public class CheckerCommand implements Runnable {
                 if (counter.compareAndSet(currentValue - 1, currentValue)) {
                     System.out.println("Update received, and it's in the correct order, counter: " + currentValue);
                 } else {
-                    throw new RuntimeException("Update received in an incorrect order: " + currentValue);
+                    if (currentValue > counter.get()) {
+                        System.out.println("Update received, NOT in the correct order but compatible: " + currentValue);
+                        counter.set(currentValue);
+                    } else {
+                        throw new RuntimeException("Update received in an incorrect order: " + currentValue);
+                    }
                 }
 
                 if (currentValue == num) {
