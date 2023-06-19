@@ -23,7 +23,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
-          cache: maven
+          # cache: maven # intentionally disabled
 
       - name: Set images UUIDs
         id: images
