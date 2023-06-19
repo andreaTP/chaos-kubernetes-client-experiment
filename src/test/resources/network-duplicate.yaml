@@ -9,6 +9,6 @@ spec:
     labelSelectors:
       'app': 'checker'
   duplicate:
-    duplicate: '50'
+    duplicate: '80'
     correlation: '50'
   duration: '12m'

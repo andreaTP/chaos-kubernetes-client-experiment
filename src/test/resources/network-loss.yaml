@@ -9,6 +9,6 @@ spec:
     labelSelectors:
       'app': 'checker'
   loss:
-    loss: '50'
+    loss: '80'
     correlation: '50'
   duration: '12m'
