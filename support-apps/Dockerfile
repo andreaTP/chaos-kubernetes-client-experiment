@@ -6,7 +6,7 @@ ARG HTTP_CLIENT
 WORKDIR /build
 
 COPY . .
-RUN mvn clean package -P${APP_NAME} -P${HTTP_CLIENT}
+RUN mvn clean package -U -P${APP_NAME} -P${HTTP_CLIENT}
 
 FROM eclipse-temurin:17
 
