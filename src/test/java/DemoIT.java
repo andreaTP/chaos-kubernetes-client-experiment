@@ -35,16 +35,6 @@ public class DemoIT {
         logger.info("BeforeEach execution");
         // this needs to be executed before the pods are started
         client.configMaps().inNamespace(client.getNamespace()).withName("chaos-test").delete();
-        try {
-            checkerSelector().delete();
-        } catch (Exception e) {
-            // ignore
-        }
-        try {
-            controlSelector().delete();
-        } catch (Exception e) {
-            // ignore
-        }
     }
 
     @AfterEach
@@ -55,7 +45,6 @@ public class DemoIT {
             var checkerLogs = checkerSelector().getLog();
             System.out.println("*** Checker Logs ***\n" + checkerLogs);
             System.out.println("******");
-            checkerSelector().delete();
         } catch (Exception e) {
             // ignore
         }
@@ -64,7 +53,6 @@ public class DemoIT {
             var controlLogs = controlSelector().getLog();
             System.out.println("*** Control Logs ***\n" + controlLogs);
             System.out.println("******");
-            controlSelector().delete();
         } catch (Exception e) {
             // ignore
         }
