@@ -6,13 +6,12 @@ import io.fabric8.kubernetes.client.dsl.PodResource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -29,6 +28,7 @@ public class DemoIT {
 
     String checkerImage = System.getenv("CHECKER_IMAGE");
     String controlImage = System.getenv("CONTROL_IMAGE");
+    String chaosTest = Optional.ofNullable(System.getenv("CHAOS_TEST")).orElse("network-delay.yaml");
 
     @BeforeEach
     void beforeEach() throws Exception {
@@ -90,10 +90,8 @@ public class DemoIT {
     }
 
     @Test
-    @ParameterizedTest
-    @ValueSource(strings = {"network-delay.yaml", "network-loss.yaml", "network-duplicate.yaml"})
-    void test(String chaosExperiment) throws IOException {
-        logger.warn("Running testDeploy test.");
+    void test() throws IOException {
+        logger.warn("Running test with chaos settings from: " + chaosTest);
 
         try (var is = this.getClass().getClassLoader().getResourceAsStream("checker-pod.yaml")) {
             var resources = client.load(is).resources().collect(Collectors.toList());
@@ -131,7 +129,7 @@ public class DemoIT {
             return true;
         });
 
-        try (var is = this.getClass().getClassLoader().getResourceAsStream(chaosExperiment)) {
+        try (var is = this.getClass().getClassLoader().getResourceAsStream(chaosTest)) {
             client.load(is).inNamespace(client.getNamespace()).createOrReplace();
         }
 

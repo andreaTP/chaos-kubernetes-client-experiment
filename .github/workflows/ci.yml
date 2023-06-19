@@ -12,7 +12,8 @@ jobs:
       fail-fast: false
       matrix:
         java-version: [11, 17]
-        http-client: [ "okhttp", "jdkhttp", "vertxhttp"]
+        http-client: ["okhttp", "jdkhttp", "vertxhttp"]
+        chaos-test: ["network-delay.yaml", "network-loss.yaml", "network-duplicate.yaml"]
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -30,6 +31,7 @@ jobs:
           echo "CHECKER_IMAGE=$(echo ttl.sh/$(uuidgen)-checker:10h | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
           echo "CONTROL_IMAGE=$(echo ttl.sh/$(uuidgen)-control:10h | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
           echo "HTTP_CLIENT=${{ matrix.http-client }}" >> "$GITHUB_ENV"
+          echo "CHAOS_TEST=${{ matrix.chaos-test }}" >> "$GITHUB_ENV"
 
       - name: Build and push support apps
         working-directory: ./support-apps
