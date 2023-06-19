@@ -80,6 +80,8 @@ public class DemoIT {
     @Test
     void test() throws IOException {
         logger.warn("Running test with chaos settings from: " + chaosTest);
+        logger.warn("Using checker image: " + checkerImage);
+        logger.warn("Using control image: " + controlImage);
 
         try (var is = this.getClass().getClassLoader().getResourceAsStream("checker-pod.yaml")) {
             var resources = client.load(is).resources().collect(Collectors.toList());
