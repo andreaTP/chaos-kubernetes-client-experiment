@@ -11,7 +11,7 @@ export HTTP_CLIENT="vertxhttp"
 (cd $SCRIPT_DIR/support-apps && make all)
 
 cd $SCRIPT_DIR
-# mvn verify
+mvn verify
 
 echo "If the control and checker apps are not changed you can re-use the containers:"
 echo "export CHECKER_IMAGE=${CHECKER_IMAGE}"

@@ -9,5 +9,5 @@ spec:
     labelSelectors:
       'app': 'checker'
   delay:
-    latency: '20s'
+    latency: '60s'
   duration: '12m'
