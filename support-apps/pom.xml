@@ -15,7 +15,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <surefire-plugin.version>3.0.0</surefire-plugin.version>
     <picocli.version>4.7.3</picocli.version>
-    <fabric8.version>6.8-SNAPSHOT</fabric8.version>
+    <!-- <fabric8.version>6.8-SNAPSHOT</fabric8.version> -->
+    <fabric8.version>6.6.0</fabric8.version>
   </properties>
 
   <repositories>
